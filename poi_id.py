@@ -12,7 +12,7 @@ from pprint import pprint
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
 
-# Not using the fields: email_address (because it's a string and does't add value to the model), and total_payments and total_stock_value (those are only total columns that sum up other features)
+# Not using the fields: email_address (because it's a string and doesn't add value to the model), and total_payments and total_stock_value (those are only total columns that sum up other features)
 features_list = ['poi','salary', 'deferral_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees', 'to_messages', 'from_poi_to_this_person', 'from_messages', 'from_this_person_to_poi', 'shared_receipt_with_poi'] # You will need to use more features
 
 # print "features_list " + str(features_list)
@@ -97,86 +97,23 @@ features_train, features_test, labels_train, labels_test = \
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, Imputer
 from sklearn.decomposition import PCA
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedShuffleSplit
-from sklearn.feature_selection import SelectKBest
 from sklearn.neighbors import NearestNeighbors
 
-# pipeline = Pipeline([
-#         ('imp', Imputer()),
-#         ('pca', PCA()),
-#         ('kbest', SelectKBest()),
-#         ('clf', GaussianNB()),
-#     ])
-
-class SelectAtMostKBest(SelectKBest):
-
-    def _check_params(self, X, y):
-        if not (self.k == "all" or 0 <= self.k <= X.shape[1]):
-            # set k to "all" (skip feature selection), if less than k features are available
-            self.k = "all"
-
 pipeline = Pipeline([
-        ('imp', Imputer()),
+        ('imputer', Imputer()),
+        ('scaler', StandardScaler()),
         ('pca', PCA()),
-        # ('kbest', SelectKBest()),
-        ('clf', DecisionTreeClassifier(random_state = 53)),
+        ('clf', GaussianNB()),
     ])
 
-# param_grid = dict(pca__n_components = [5], 
-#                   kbest__k = [5],    
-#                   clf__criterion = ['gini'],
-#                   clf__splitter = ['best'],
-#                   clf__min_samples_split = [16], 
-#                   clf__max_features = [None],
-#                   clf__max_depth = [4],
-#                   clf__presort = [True, False],
-#                   clf__class_weight = [None, "balanced"]) 
-
-# DecisionTreeClassifier
 param_grid = dict(
-                  # pca__n_components = [4, 5, 6, 'mle', None], 
-                  # # kbest__k = [4, 5, 6],    
-                  # clf__criterion = ['gini', 'entropy'],
-                  # clf__splitter = ['best', 'random'],
-                  # clf__min_samples_split = [12, 14, 16, 18], 
-                  # clf__max_features = ['auto', 'sqrt', 'log2', None],
-                  # clf__max_depth = [3, 4, 5],
-                  # clf__presort = [True, False],
-                  # clf__class_weight = [None, "balanced"]
+                  imputer__strategy = ["mean", "median"],
+                  scaler__with_mean = [True, False],
+                  scaler__with_std = [True, False],
+                  scaler__copy = [True, False],
+                  pca__n_components = [5, 10, 15, 'mle', None]
                   ) 
-
-# NearestNeighbors
-# param_grid = dict(pca__n_components = [5, 10, 'mle', None], 
-#                   kbest__k = [1, 5, 10],    
-#                   clf__n_neighbors = [5, 10, 15, 20],
-#                   clf__algorithm : ['auto', 'ball_tree', 'kd_tree', 'brute'], 
-#                   clf__leaf_size = [20, 30, 40],
-#                   clf__max_depth = [5, 10],
-#                   clf__metric = ['cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan', 'minkowski'],
-#                   clf__n_jobs = [-1]) 
-
-# RandomForestClassifier
-# param_grid = dict(
-#                   pca__n_components = [5, 10, 'mle', None], 
-#                   # pca__n_components = ['mle'], 
-#                   # kbest__k = [1, 5, 10],
-#                   # clf__n_estimators = [5, 10, 15],
-#                   # clf__criterion = ['gini', 'entropy'],
-#                   # clf__min_samples_split = [10, 20, 30], 
-#                   # clf__max_features = ['auto', 'sqrt', 'log2', None],
-#                   # clf__max_depth = [5, 10],
-#                   clf__max_depth = [10],
-#                   # clf__class_weight = [None, "balanced", "balanced_subsample"],
-#                   # clf__warm_start = [False],
-#                   # clf__n_jobs = [-1]
-#                   ) 
-
-# GaussianNB
-# param_grid = dict(pca__n_components = [5, 10, 'mle', None], 
-#                   kbest__k = [1, 5, 10],
-#                   clf__priors = [None]) 
 
 # cross-validation
 validator = StratifiedShuffleSplit(n_splits = 10, test_size = 0.3, random_state = 42)

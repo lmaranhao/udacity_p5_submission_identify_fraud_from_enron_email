@@ -27,7 +27,9 @@ with open("final_project_dataset.pkl", "r") as data_file:
 
 #plot(data_dict, "salary", "bonus")
 data_dict.pop('TOTAL', 0)
-#plot(data_dict, "salary", "bonus")
+data_dict.pop('LOCKHART EUGENE E', 0)
+data_dict.pop('THE TRAVEL AGENCY IN THE PARK', 0)
+pprint(data_dict)
 
 ### Task 3: Create new feature(s)
 # here I created 2 new feature

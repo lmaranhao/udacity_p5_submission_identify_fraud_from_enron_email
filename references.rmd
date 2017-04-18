@@ -1,5 +1,6 @@
 http://scikit-learn.org/stable/documentation.html
 https://discussions.udacity.com/c/nd002-p5-intro-to-machine-learning
 http://stackoverflow.com/
+http://www.kdnuggets.com/2016/08/10-algorithms-machine-learning-engineers.html
 
 I hereby confirm that this submission is my work. I have cited above the origins of any parts of the submission that were taken from Websites, books, forums, blog posts, github repositories, etc.
